@@ -4,13 +4,10 @@ import { getLangFromPath, getNextGlobalLang } from '@/i18n/lang'
 /**
  * Get path to tag page with language support
  * @param tagName Tag name
- * @param lang Current language code
  * @returns Path to tag page
  */
-export function getTagPath(tagName: string, lang: string): string {
-  return lang === defaultLocale
-    ? `/tags/${tagName}/`
-    : `/${lang}/tags/${tagName}/`
+export function getTagPath(tagName: string): string {
+  return `/tags/${tagName}/`
 }
 
 /**

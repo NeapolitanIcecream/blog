@@ -1,0 +1,16 @@
+---
+import { getEntry, render } from 'astro:content'
+import Layout from '@/layouts/Layout.astro'
+
+const aboutEntry = await getEntry('about', 'about')
+const Content = aboutEntry ? (await render(aboutEntry)).Content : null
+---
+
+<Layout>
+  <!-- Decorative Line -->
+  <div class="uno-decorative-line"></div>
+  <!-- About Page Content -->
+  <div class="heti">
+    {Content && <Content />}
+  </div>
+</Layout>

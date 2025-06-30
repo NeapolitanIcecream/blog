@@ -2,7 +2,6 @@
 import type { CollectionEntry } from 'astro:content'
 import PinIcon from '@/assets/icons/pin-icon.svg'
 import PostDate from '@/components/PostDate.astro'
-import { defaultLocale } from '@/config'
 import { generateDescription } from '@/utils/description'
 import { isHomePage } from '@/utils/page'
 
@@ -12,12 +11,11 @@ type Post = CollectionEntry<'posts'> & {
   }
 }
 
-const { posts, lang, pinned = false } = Astro.props
+const { posts, pinned = false } = Astro.props
 const isHome = isHomePage(Astro.url.pathname)
 
 export interface Props {
   posts: Post[]
-  lang: string
   pinned?: boolean
 }
 
@@ -25,13 +23,8 @@ function getPostPath(post: Post) {
   // Prioritize abbrlink over slug
   const postPath = post.data.abbrlink || post.id
 
-  // If default language, return root path
-  if (lang === defaultLocale) {
-    return `/posts/${postPath}/`
-  }
-
-  // Add language prefix for non-default languages
-  return `/${lang}/posts/${postPath}/`
+  // Return root path
+  return `/posts/${postPath}/`
 }
 ---
 
@@ -48,7 +41,7 @@ function getPostPath(post: Post) {
           class="cjk:tracking-0.02em"
           lg={isHome ? 'font-medium text-4.5' : ''}
           href={getPostPath(post)}
-          transition:name={`post-${post.data.abbrlink || post.id}${lang ? `-${lang}` : ''}`}
+          transition:name={`post-${post.data.abbrlink || post.id}`}
           data-disable-theme-transition
         >
           {post.data.title}
@@ -67,7 +60,7 @@ function getPostPath(post: Post) {
       {/* mobile post time */}
       <div
         class="py-0.8 text-3.5 font-time lg:hidden"
-        transition:name={`time-${post.data.abbrlink || post.id}${lang ? `-${lang}` : ''}`}
+        transition:name={`time-${post.data.abbrlink || post.id}`}
         data-disable-theme-transition
       >
         <PostDate

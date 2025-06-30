@@ -1,0 +1,16 @@
+---
+import TagsWrapper from '@/components/TagsWrapper.astro'
+import Layout from '@/layouts/Layout.astro'
+import { getAllTags } from '@/utils/content'
+
+const allTags = await getAllTags()
+---
+
+<Layout>
+  <!-- Decorative Line -->
+  <div class="uno-decorative-line"></div>
+  <!-- Tags List -->
+  <TagsWrapper
+    tags={allTags}
+  />
+</Layout>
