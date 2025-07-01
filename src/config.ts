@@ -167,10 +167,10 @@ export const themeConfig: ThemeConfig = {
         name: 'GitHub',
         url: 'https://github.com/NeapolitanIcecream',
       },
-      {
-        name: 'Email',
-        url: 'chenmohan1@huawei.com',
-      },
+      // {
+      //   name: 'Email',
+      //   url: '',
+      // },
       // {
       //   name: 'X',
       //   url: 'https://x.com/radishzz_',
