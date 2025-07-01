@@ -145,6 +145,15 @@ export default defineConfig({
   devToolbar: {
     enabled: false,
   },
+  // Disable CSS and general sourcemaps to suppress missing source map warnings
+  vite: {
+    css: {
+      devSourcemap: false,
+    },
+    build: {
+      sourcemap: false,
+    },
+  },
   // For local development
   server: {
     headers: {
