@@ -9,7 +9,7 @@ tags: [survey, lifelong-memory]
 
 ## 人类的记忆系统
 
-理论基础主要来自 Atkinson–Shiffrin memory model 和 Baddeley's model of working memory。书写有所抉择。
+理论基础主要来自 Atkinson–Shiffrin memory model 和 Baddeley's model of working memory。书写有所取舍。包含一些主观的观点。
 
 ![](./_images/lifelong-memory/1.svg)
 
@@ -64,13 +64,26 @@ LTM 是分层存储的。首先进入**海马体** (Hippocampus)，然后随系�
 
 ## LLM 的记忆系统
 
-### 工作记忆
+现在对 LLM 记忆研究的分类方法都让我不太满意，因此本节以不同工作方向（方法和作用区域）来作区分，不和人类记忆系统绑定，只标明人类记忆系统中的相似机制。
 
-### 情景记忆
+### 训练
 
-### 语义记忆
+1. **重放**：训练时，保存少量旧的样本（eg. [Gradient based sample selection for online continual learning](https://arxiv.org/abs/1903.08671)）或者训练一个额外的模型来生成这些数据（eg. [Continual learning with deep generative replay](https://proceedings.neurips.cc/paper/2017/hash/0efbe98067c6c73dba1250d2beaa81f9-Abstract.html)），在训练新任务时对这些样本进行重放，避免在学习新任务时遗忘旧任务。
+2. **持续强化学习**：在强化学习中使用**重放**（eg. [Revisiting prioritized experience replay: A value perspective](https://arxiv.org/abs/2102.03261)），样本以状态转移及其奖励的形式存在，在单个任务上也能提升训练的稳定性和学习效率。
 
-### 参数记忆
+### 注意力机制
+
+注意力机制的改进基本上是计算成本驱动的（eg. [DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model](https://arxiv.org/abs/2405.04434)）。如果从 neuro 的角度重新审视，LLM 的感官记忆选择性进入工作记忆的过程是由注意力机制内部的稀疏性建模的，而非真正设计了此过程，这里应该有很多可挖掘的成本空间。
+
+### 实时上下文和中间状态
+
+1. **压缩**：在有限的上下文窗口内包含更多信息，或者避免旧的 prompt 在融入新的 prompt 时发生灾难性遗忘。方法通常和**组块**有一定相似性，在工作记忆内引入或者将其重组成数量更少的、意义更丰富和内聚的单元。相关工作包括使用原始 prompt 的替代表达形式来缩小 tokens 数量（eg. [Learning to Compress Prompts with Gist Tokens](https://proceedings.neurips.cc/paper_files/paper/2023/hash/3d77c6dcc7f143aa2154e7f4d5e22d68-Abstract-Conference.html)）和直接压缩 prompts（eg. [LongLLMLingua: Accelerating and Enhancing LLMs in Long Context Scenarios via Prompt Compression](https://arxiv.org/abs/2310.06839)）。我认为（考虑到迄今为止不基于词表的 LLM 的表现）tokenizer 也无意间应用了此策略。
+2. **Test Time Scaling**：我会把 CoT 和自我纠正（eg. [Confidence Matters: Revisiting Intrinsic Self-Correction Capabilities of Large Language Models](https://arxiv.org/abs/2402.12563)）等工作都归入此范畴。方法通常和**复述**有一定相似性，在工作记忆里对先前的回答作评估和反思。从计算复杂度的角度重新审视，提升很可能来自本质计算量的满足。
+3. 
+
+### 外部存储
+
+### 演化
 
 ## 挑战
 
