@@ -25,7 +25,7 @@ OpenEvolve 的作者 Asankhaya Sharma 出色而且刻苦的工作一度让我放
 1. 复用最主流的版本管理、diff 生成等能力，而不是自己造轮子（然后修一大堆 bug）；
 2. 模型进化 commit 形成的 git 历史为进化过程提供了天然的可解释性，人类通过 review git 历史来理解进化过程，而不是把后者作为一个黑箱。
 
-OpenEvolve 里的 MAP-Elits 有两个预设的特征维度：complexity 和 diversity。Complexity 是直接 `len(file)` 得到的，我们有样学样，清洗一下 diff 后也搞个 `len(diff)`。至于 Diversity，OpenEvolve（如我们上面所说的）一开始用字符级别编辑距离来计算，后来发现太慢了，改为代码长度、行数和字符集差异。这仍然很奇怪，我们很容易构造出代码长度相近、行数和字符集相同，但是功能完全不同的程序。无论如何，我们考虑用如下图所示的方法计算 commit 的 diversity：
+OpenEvolve 里的 MAP-Elites 有两个预设的特征维度：complexity 和 diversity。Complexity 是直接 `len(file)` 得到的，我们有样学样，清洗一下 diff 后也搞个 `len(diff)`。至于 Diversity，OpenEvolve（如我们上面所说的）一开始用字符级别编辑距离来计算，后来发现太慢了，改为代码长度、行数和字符集差异。这仍然很奇怪，我们很容易构造出代码长度相近、行数和字符集相同，但是功能完全不同的程序。无论如何，我们考虑用如下图所示的方法计算 commit 的 diversity：
 
 ![](./_images/alpha-evolve/openevolve-codebase-git.svg)
 
