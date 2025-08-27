@@ -21,6 +21,7 @@ import { rehypeUnwrapImg } from './src/plugins/rehype-unwrap-img.mjs'
 import { remarkAdmonitions } from './src/plugins/remark-admonitions.mjs'
 import { remarkMediaEmbeds } from './src/plugins/remark-media-embeds.mjs'
 import { remarkReadingTime } from './src/plugins/remark-reading-time.mjs'
+import { remarkEscapeEmoticonDirectives } from './src/plugins/remark-escape-emoticons.mjs'
 
 const url = themeConfig.site.url
 const locale = themeConfig.global.locale
@@ -70,6 +71,7 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [
       remarkDirective,
+      remarkEscapeEmoticonDirectives,
       remarkMath,
       remarkAdmonitions,
       remarkMediaEmbeds,

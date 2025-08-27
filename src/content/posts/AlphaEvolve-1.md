@@ -3,7 +3,6 @@ title: "From OpenEvolve to AlphaEvolve, Part 1: Full Codebase Evolution"
 published: 2025-08-26
 toc: true
 abbrlink: alpha-evolve-1
-description: "把 OpenEvolve 重构为能进化整个代码库的代码智能体"
 tags: [AlphaEvolve, code agent, LLM, evolutionary algorithms]
 ---
 
