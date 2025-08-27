@@ -159,14 +159,18 @@ document.addEventListener('astro:before-swap', ({ newDocument }) => {
   initMotionPref(newDocument)
 })
 
-// 3. Listen to system theme changes in real-time
-window
-  .matchMedia('(prefers-color-scheme: dark)')
-  .addEventListener('change', ({ matches: isDark }) => {
-    localStorage.setItem('theme', isDark ? 'dark' : 'light')
-    initTheme()
+// 3. Listen to system theme changes in real-time (only when in auto mode and no user preference)
+if (defaultMode === 'auto' && !localStorage.getItem('theme')) {
+  const media = window.matchMedia('(prefers-color-scheme: dark)')
+  media.addEventListener('change', ({ matches: isDark }) => {
+    // Reflect system preference only in auto mode without overriding explicit user choice
+    // Do not persist to localStorage so that manual toggle can take precedence later
+    document.documentElement.classList.toggle('dark', isDark)
+    const metaTheme = document.head.querySelector('meta[name="theme-color"]')
+    metaTheme?.setAttribute('content', isDark ? darkMode : lightMode)
     document.dispatchEvent(new Event('theme-changed'))
   })
+}
 </script>
 
 <!-- Google Analytics -->
