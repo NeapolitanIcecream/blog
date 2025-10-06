@@ -20,7 +20,7 @@
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",
     "@astrojs/partytown": "^2.1.4",
-    "@astrojs/sitemap": "^3.4.1",
+    "@astrojs/sitemap": "^3.6.0",
     "@waline/client": "^3.5.7",
     "astro": "^5.10.1",
     "astro-compress": "^2.3.8",
