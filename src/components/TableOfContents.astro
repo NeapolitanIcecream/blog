@@ -1,0 +1,34 @@
+---
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  headings: Heading[]
+}
+
+const headings = Astro.props.headings.filter(
+  (heading) => heading.depth === 2 || heading.depth === 3,
+)
+
+function getHeadingText(text: string): string {
+  return text.replace(/#\s*$/, '').trim()
+}
+---
+
+{
+  headings.length > 0 && (
+    <nav class="toc" aria-label="本文目录">
+      <p class="toc__eyebrow">本文目录</p>
+      <ol>
+        {headings.map((heading) => (
+          <li class:list={{ toc__subitem: heading.depth === 3 }}>
+            <a href={`#${heading.slug}`}>{getHeadingText(heading.text)}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

@@ -1,35 +1,50 @@
 ---
-import PostList from '@/components/PostList.astro'
-import TagsWrapper from '@/components/TagsWrapper.astro'
-import Layout from '@/layouts/Layout.astro'
-import { getAllTags, getPostsByTag } from '@/utils/content'
+import PostCard from '../../components/PostCard.astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getPublishedPosts, getTagSummary } from '../../utils/posts'
 
 export async function getStaticPaths() {
-  const allTags = await getAllTags()
-  return allTags.map((tag) => ({
-    params: { tag: tag },
-    props: { tag },
-  }));
+  const posts = await getPublishedPosts()
+  const tags = getTagSummary(posts)
+
+  return tags.map(({ name }) => ({
+    params: { tag: name },
+    props: {
+      tag: name,
+      posts: posts.filter((post) => post.data.tags.includes(name)),
+    },
+  }))
 }
 
-const { tag } = Astro.props
-const posts = await getPostsByTag(tag)
-const allTags = await getAllTags()
+interface Props {
+  tag: string
+  posts: Awaited<ReturnType<typeof getPublishedPosts>>
+}
+
+const { tag, posts } = Astro.props
 ---
 
-<Layout>
-  <!-- Decorative Line -->
-  <div class="uno-decorative-line"></div>
-  <!-- Tags List -->
-  <TagsWrapper
-    tags={allTags}
-    currentTag={tag}
-  />
+<BaseLayout title={`标签：${tag}`} description={`以“${tag}”为标签的全部文章。`}>
+  <header class="page-header">
+    <div class="page-header__grid shell">
+      <div>
+        <nav class="breadcrumb breadcrumb--page" aria-label="面包屑">
+          <ol>
+            <li><a href="/">首页</a></li>
+            <li><a href="/tags/">标签</a></li>
+            <li aria-current="page">{tag}</li>
+          </ol>
+        </nav>
+        <p class="eyebrow">标签归档</p>
+        <h1>{tag}</h1>
+      </div>
+      <p>共 {posts.length} 篇文章，按发布时间从新到旧排列。</p>
+    </div>
+  </header>
 
-  <!-- Posts List -->
-  <div class="mt-10.5">
-    <PostList
-      posts={posts}
-    />
-  </div>
-</Layout>
+  <section class="archive shell" aria-label={`${tag} 标签文章`}>
+    <div class="archive__list">
+      {posts.map((post) => <PostCard post={post} headingLevel={2} />)}
+    </div>
+  </section>
+</BaseLayout>

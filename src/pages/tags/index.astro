@@ -1,16 +1,45 @@
 ---
-import TagsWrapper from '@/components/TagsWrapper.astro'
-import Layout from '@/layouts/Layout.astro'
-import { getAllTags } from '@/utils/content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getPublishedPosts, getTagSummary, getTagUrl } from '../../utils/posts'
 
-const allTags = await getAllTags()
+const posts = await getPublishedPosts()
+const tags = getTagSummary(posts)
 ---
 
-<Layout>
-  <!-- Decorative Line -->
-  <div class="uno-decorative-line"></div>
-  <!-- Tags List -->
-  <TagsWrapper
-    tags={allTags}
-  />
-</Layout>
+<BaseLayout title="标签" description="按主题浏览 Voile 技术博客的文章。">
+  <header class="page-header">
+    <div class="page-header__grid shell">
+      <div>
+        <p class="eyebrow">主题索引</p>
+        <h1>标签</h1>
+      </div>
+      <p>标签描述文章讨论的问题域。一个文章可以同时属于多个主题。</p>
+    </div>
+  </header>
+
+  <section class="section shell" aria-label="全部标签">
+    {
+      tags.length > 0 ? (
+        <ul class="tag-index">
+          {tags.map((tag, index) => (
+            <li>
+              <a href={getTagUrl(tag.name)}>
+                <span class="tag-index__number">{String(index + 1).padStart(2, '0')}</span>
+                <strong>{tag.name}</strong>
+                <span>{tag.count} 篇文章</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="empty-state">
+          <h2>还没有标签。</h2>
+          <p>发布带有 `tags` 字段的文章后，这里会自动生成索引。</p>
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>

@@ -1,0 +1,206 @@
+---
+import 'katex/dist/katex.min.css'
+import TableOfContents from '../components/TableOfContents.astro'
+import type { Post } from '../utils/posts'
+import { formatDate, formatDateISO, getPostUrl, getReadingMinutes, getTagUrl } from '../utils/posts'
+import BaseLayout from './BaseLayout.astro'
+
+interface Heading {
+  depth: number
+  slug: string
+  text: string
+}
+
+interface Props {
+  post: Post
+  headings: Heading[]
+  previous?: Post
+  next?: Post
+}
+
+const { post, headings, previous, next } = Astro.props
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  article
+  publishedDate={post.data.publishDate}
+  updatedDate={post.data.updatedDate}
+>
+  <article class="article">
+    <header class="article-header">
+      <div class="shell">
+        <nav class="breadcrumb" aria-label="面包屑">
+          <ol>
+            <li><a href="/">首页</a></li>
+            <li><a href="/posts/">文章</a></li>
+            <li aria-current="page">{post.data.title}</li>
+          </ol>
+        </nav>
+
+        <div class="article-header__grid">
+          <div class="article-header__main">
+            <p class="eyebrow">技术文章</p>
+            <h1 data-pagefind-meta="title">{post.data.title}</h1>
+            <p class="article-header__description" data-pagefind-meta="description">
+              {post.data.description}
+            </p>
+          </div>
+
+          <dl class="article-meta">
+            <div>
+              <dt>发布</dt>
+              <dd>
+                <time datetime={formatDateISO(post.data.publishDate)}>
+                  {formatDate(post.data.publishDate)}
+                </time>
+              </dd>
+            </div>
+            {
+              post.data.updatedDate && (
+                <div>
+                  <dt>更新</dt>
+                  <dd>
+                    <time datetime={formatDateISO(post.data.updatedDate)}>
+                      {formatDate(post.data.updatedDate)}
+                    </time>
+                  </dd>
+                </div>
+              )
+            }
+            <div>
+              <dt>阅读</dt>
+              <dd>{getReadingMinutes(post)} 分钟</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </header>
+
+    <div class="article-shell shell">
+      <div class="article-content">
+        <div class="prose" data-pagefind-body>
+          <slot />
+        </div>
+
+        <footer class="article-footer">
+          <div>
+            <p class="article-footer__label">归档标签</p>
+            <ul class="tag-list tag-list--large">
+              {
+                post.data.tags.map((tag) => (
+                  <li>
+                    <a href={getTagUrl(tag)}>{tag}</a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <a class="text-link text-link--arrow" href="/rss.xml">通过 RSS 订阅后续文章</a>
+        </footer>
+
+        {
+          (previous || next) && (
+            <nav class="post-pagination" aria-label="相邻文章">
+              {previous ? (
+                <a href={getPostUrl(previous)} rel="prev">
+                  <span>上一篇</span>
+                  <strong>{previous.data.title}</strong>
+                </a>
+              ) : (
+                <span />
+              )}
+              {next && (
+                <a href={getPostUrl(next)} rel="next">
+                  <span>下一篇</span>
+                  <strong>{next.data.title}</strong>
+                </a>
+              )}
+            </nav>
+          )
+        }
+      </div>
+
+      <aside class="article-sidebar">
+        <TableOfContents headings={headings} />
+      </aside>
+    </div>
+  </article>
+
+  <script>
+    import mermaid from 'mermaid'
+
+    function prepareMermaidBlocks() {
+      const blocks = document.querySelectorAll<HTMLElement>('pre > code.language-mermaid')
+
+      for (const code of blocks) {
+        const pre = code.parentElement
+        if (!pre) continue
+
+        const figure = document.createElement('figure')
+        figure.className = 'mermaid-figure'
+
+        const diagram = document.createElement('div')
+        diagram.className = 'mermaid'
+        diagram.dataset.source = encodeURIComponent(code.textContent ?? '')
+        diagram.textContent = code.textContent
+
+        const caption = document.createElement('figcaption')
+        caption.className = 'visually-hidden'
+        caption.textContent = 'Mermaid 图表'
+
+        figure.append(diagram, caption)
+        pre.replaceWith(figure)
+      }
+    }
+
+    async function renderMermaidBlocks() {
+      const diagrams = [...document.querySelectorAll<HTMLElement>('.mermaid[data-source]')]
+      if (diagrams.length === 0) return
+
+      const dark = document.documentElement.dataset.theme === 'dark'
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'strict',
+        theme: dark ? 'dark' : 'base',
+        fontFamily:
+          'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        themeVariables: dark
+          ? {
+              primaryColor: '#1f6feb',
+              primaryTextColor: '#f0f6fc',
+              primaryBorderColor: '#58a6ff',
+              lineColor: '#9ea7b3',
+              secondaryColor: '#21262d',
+              tertiaryColor: '#161b22',
+            }
+          : {
+              primaryColor: '#dbeafe',
+              primaryTextColor: '#101820',
+              primaryBorderColor: '#005bd8',
+              lineColor: '#4f5b66',
+              secondaryColor: '#f5f7fa',
+              tertiaryColor: '#ffffff',
+            },
+      })
+
+      for (const diagram of diagrams) {
+        const source = diagram.dataset.source
+        if (!source) continue
+        diagram.removeAttribute('data-processed')
+        diagram.textContent = decodeURIComponent(source)
+      }
+
+      try {
+        await mermaid.run({ nodes: diagrams })
+      } catch (error) {
+        console.error('Mermaid 图表渲染失败', error)
+      }
+    }
+
+    prepareMermaidBlocks()
+    void renderMermaidBlocks()
+    window.addEventListener('voile:theme-change', () => void renderMermaidBlocks())
+  </script>
+</BaseLayout>

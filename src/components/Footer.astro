@@ -1,47 +1,41 @@
 ---
-import { defaultLocale, themeConfig } from '@/config'
-import { getLangFromPath } from '@/i18n/lang'
+import { NAVIGATION, SITE } from '../config'
 
-const { author } = themeConfig.site
-const { links: socialLinks, startYear } = themeConfig.footer
-
-const currentYear = new Date().getFullYear()
-const year = Number(startYear) === currentYear ? startYear : `${startYear}-${currentYear}`
-
-// i18n RSS Feed Path
-const currentLang = getLangFromPath(Astro.url.pathname)
-const links = socialLinks.map(({ name, url, ...rest }) => {
-  if (name === 'RSS') {
-    return { name, url: currentLang === defaultLocale ? url : `/${currentLang}${url}`, ...rest }
-  }
-
-  if (name === 'Email') {
-    return { name, url: url.startsWith('mailto:') ? url : `mailto:${url}`, ...rest }
-  }
-
-  return { name, url, ...rest }
-})
-
-const footerLinkClass = 'highlight-hover py-0.8 transition-colors after:bottom-0.35em hover:c-primary'
+const year = new Date().getUTCFullYear()
 ---
 
-<footer
-  class="text-3 leading-1.25em font-navbar lg:text-3.5"
-  lg="uno-desktop-column bottom-20"
->
-  <p>
-    {links.map((link, index) => (
-      <>
-        <a class={footerLinkClass} href={link.url} target="_blank" rel="noopener noreferrer">{link.name}</a>&nbsp;{index < links.length - 1 && '/'}
-      </>
-    ))}
-  </p>
+<footer class="site-footer">
+  <div class="site-footer__grid shell">
+    <div class="site-footer__intro">
+      <a class="footer-brand" href="/">{SITE.title}</a>
+      <p>{SITE.description}</p>
+    </div>
 
-  <p>
-    © {year} {author}
-  </p>
+    <nav aria-label="页脚导航">
+      <h2>浏览</h2>
+      <ul>
+        {
+          NAVIGATION.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/search/">搜索</a></li>
+      </ul>
+    </nav>
 
-  <p>
-    Powered by <a class={footerLinkClass} href="https://astro.build/" target="_blank" rel="noopener noreferrer">Astro</a> and <a class={footerLinkClass} href="https://github.com/radishzzz/astro-theme-retypeset" target="_blank" rel="noopener noreferrer">Retypeset</a>
-  </p>
+    <nav aria-label="订阅与源代码">
+      <h2>连接</h2>
+      <ul>
+        <li><a href="/rss.xml">RSS 订阅</a></li>
+        <li><a href={SITE.repository} rel="external">GitHub 源码</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="site-footer__meta shell">
+    <p>© {year} {SITE.author}。内容版权归作者所有。</p>
+    <p>Astro 构建 · Cloudflare Pages 托管</p>
+  </div>
 </footer>

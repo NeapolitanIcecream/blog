@@ -1,0 +1,7 @@
+dist
+node_modules
+.astro
+.wrangler
+.playwright-cli
+output
+pnpm-lock.yaml

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Voile 技术博客</title>
+  <desc id="desc">关于软件、系统与方法的中文技术写作</desc>
+  <rect width="1200" height="630" fill="#f5f7fa"/>
+  <rect width="1200" height="18" fill="#101820"/>
+  <rect x="72" y="72" width="88" height="88" rx="8" fill="#101820"/>
+  <path d="M92 93h18l6 30 12-30h18l-22 48h-17L92 93Z" fill="#fff"/>
+  <path d="M137 93h9l-22 48h-9l22-48Z" fill="#ffdd00"/>
+  <text x="72" y="252" fill="#101820" font-family="system-ui, sans-serif" font-size="88" font-weight="700">Voile 技术博客</text>
+  <text x="72" y="334" fill="#4f5b66" font-family="system-ui, sans-serif" font-size="38">软件、系统与方法</text>
+  <rect x="72" y="422" width="1056" height="1" fill="#aeb6bf"/>
+  <text x="72" y="505" fill="#005bd8" font-family="ui-monospace, monospace" font-size="34">voile.tech</text>
+  <circle cx="1055" cy="500" r="56" fill="#005bd8"/>
+  <circle cx="1112" cy="443" r="20" fill="#ffdd00"/>
+</svg>

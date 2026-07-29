@@ -1,25 +1,176 @@
 ---
-import PostList from '@/components/PostList.astro'
-import Layout from '@/layouts/Layout.astro'
-import { getPinnedPosts, getPostsByYear } from '@/utils/content'
+import PostCard from '../components/PostCard.astro'
+import { SITE } from '../config'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getPublishedPosts, getTagSummary, getTagUrl } from '../utils/posts'
 
-const pinnedPosts = await getPinnedPosts()
-const postsByYear = await getPostsByYear()
+const posts = await getPublishedPosts()
+const featured = posts.find((post) => post.data.featured) ?? posts[0]
+const remaining = posts.filter((post) => post.id !== featured?.id).slice(0, 4)
+const tags = getTagSummary(posts).slice(0, 6)
 ---
-<Layout>
-  <!-- Pinned Posts -->
-  {pinnedPosts.length > 0 && (
-    <section class="mb-7.5">
-      <div class="uno-decorative-line"></div>
-      <PostList posts={pinnedPosts} pinned={true} />
-    </section>
-  )}
 
-  <!-- Regular Posts -->
-  {[...postsByYear.entries()].map(([_year, posts]) => (
-    <section class="mb-7.5">
-      <div class="uno-decorative-line"></div>
-      <PostList posts={posts} />
-    </section>
-  ))}
-</Layout>
+<BaseLayout>
+  <section class="home-hero">
+    <div class="home-hero__grid shell">
+      <div class="home-hero__content">
+        <p class="eyebrow">软件、系统与方法</p>
+        <h1>把复杂问题<br />写清楚。</h1>
+        <p class="home-hero__lead">
+          这里记录工程实践、系统设计与问题求解。文章用中文写作，以代码、图表和公式保留推理过程。
+        </p>
+        <div class="button-row">
+          <a class="button button--primary" href="/posts/">阅读文章</a>
+          <a class="button button--secondary" href="/about/">了解本站</a>
+        </div>
+      </div>
+
+      <div class="system-card" aria-label="本站写作能力">
+        <div class="system-card__bar">
+          <span>voile.tech / writing-system</span>
+          <span class="status-dot">在线</span>
+        </div>
+        <div class="system-card__body">
+          <p class="system-card__label">内容管线</p>
+          <ol>
+            <li>
+              <span>01</span>
+              <strong>Markdown</strong>
+              <small>结构化长文</small>
+            </li>
+            <li>
+              <span>02</span>
+              <strong>Mermaid</strong>
+              <small>可维护图表</small>
+            </li>
+            <li>
+              <span>03</span>
+              <strong>LaTeX</strong>
+              <small>数学表达</small>
+            </li>
+            <li>
+              <span>04</span>
+              <strong>Astro</strong>
+              <small>静态交付</small>
+            </li>
+          </ol>
+        </div>
+        <div class="system-card__footer">
+          <span>语言：zh-CN</span>
+          <span>运行：Cloudflare</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="signal-strip" aria-label="网站特性">
+    <div class="shell">
+      <p><strong>{posts.length}</strong><span>篇公开文章</span></p>
+      <p><strong>{getTagSummary(posts).length}</strong><span>个主题标签</span></p>
+      <p><strong>0</strong><span>核心阅读所需 JS</span></p>
+      <p><strong>100%</strong><span>静态页面</span></p>
+    </div>
+  </section>
+
+  {
+    featured && (
+      <section class="section shell" aria-labelledby="featured-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">编辑推荐</p>
+            <h2 id="featured-heading">从这里开始</h2>
+          </div>
+          <a class="text-link text-link--arrow" href="/posts/">
+            查看全部文章
+          </a>
+        </div>
+        <PostCard post={featured} featured headingLevel={3} />
+      </section>
+    )
+  }
+
+  {
+    remaining.length > 0 && (
+      <section class="section section--bordered shell" aria-labelledby="latest-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">最近更新</p>
+            <h2 id="latest-heading">继续阅读</h2>
+          </div>
+        </div>
+        <div class="post-grid">
+          {remaining.map((post) => (
+            <PostCard post={post} headingLevel={3} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="principles">
+    <div class="section shell" aria-labelledby="principles-heading">
+      <div class="section-heading section-heading--wide">
+        <div>
+          <p class="eyebrow">写作系统</p>
+          <h2 id="principles-heading">内容优先，界面克制。</h2>
+        </div>
+        <p>页面从语义 HTML 开始，再加入主题、图表与搜索。任何增强失效时，读者仍能完成核心阅读。</p>
+      </div>
+
+      <div class="principle-grid">
+        <article>
+          <span class="principle-grid__index">01</span>
+          <h3>可读</h3>
+          <p>正文限制在约 75 个西文字符宽度，中文使用更高行距；层级、日期和标签均可快速扫描。</p>
+        </article>
+        <article>
+          <span class="principle-grid__index">02</span>
+          <h3>可用</h3>
+          <p>导航、搜索和主题控件使用原生语义元素，提供跳转链接、可见焦点与完整键盘路径。</p>
+        </article>
+        <article>
+          <span class="principle-grid__index">03</span>
+          <h3>可维护</h3>
+          <p>颜色、间距和字体由角色令牌控制；文章只依赖 Markdown 源文件，构建结果可重复验证。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {
+    tags.length > 0 && (
+      <section class="section shell" aria-labelledby="topics-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">主题索引</p>
+            <h2 id="topics-heading">按标签浏览</h2>
+          </div>
+          <a class="text-link text-link--arrow" href="/tags/">
+            全部标签
+          </a>
+        </div>
+        <ul class="topic-cloud">
+          {tags.map((tag) => (
+            <li>
+              <a href={getTagUrl(tag.name)}>
+                <span>{tag.name}</span>
+                <small>{tag.count.toString().padStart(2, '0')}</small>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="newsletter-cta">
+    <div class="newsletter-cta__inner shell">
+      <div>
+        <p class="eyebrow">开放协议</p>
+        <h2>不设收件箱，也不错过更新。</h2>
+      </div>
+      <p>使用任意 RSS 阅读器订阅 {SITE.url.replace('https://', '')}，新文章发布后自动获取。</p>
+      <a class="button button--inverse" href="/rss.xml">订阅 RSS</a>
+    </div>
+  </section>
+</BaseLayout>

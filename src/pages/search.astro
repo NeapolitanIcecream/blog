@@ -1,0 +1,179 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getPublishedPosts, getPostUrl } from '../utils/posts'
+
+const posts = await getPublishedPosts()
+const fallbackIndex = posts.map((post) => ({
+  title: post.data.title,
+  description: post.data.description,
+  tags: post.data.tags,
+  url: getPostUrl(post),
+}))
+---
+
+<BaseLayout title="搜索" description="搜索 Voile 技术博客的文章正文、标题和标签。" noindex>
+  <header class="page-header">
+    <div class="page-header__grid shell">
+      <div>
+        <p class="eyebrow">全文检索</p>
+        <h1>搜索</h1>
+      </div>
+      <p>索引在构建时生成，搜索过程完全在当前浏览器中完成，不会提交查询词。</p>
+    </div>
+  </header>
+
+  <section
+    class="search-shell shell"
+    data-search-root
+    data-fallback-index={JSON.stringify(fallbackIndex)}
+  >
+    <form class="search-form" role="search">
+      <label for="site-search">搜索文章</label>
+      <div class="search-form__control">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-4-4"></path>
+        </svg>
+        <input
+          id="site-search"
+          name="q"
+          type="search"
+          placeholder="输入标题、正文或标签"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="submit">搜索</button>
+      </div>
+    </form>
+
+    <p class="search-status" role="status" aria-live="polite">输入关键词开始搜索。</p>
+    <ol class="search-results" aria-label="搜索结果"></ol>
+
+    <noscript>
+      <div class="notice">
+        <strong>搜索需要 JavaScript。</strong>
+        <p>
+          你仍可前往 <a href="/posts/">文章归档</a> 或 <a href="/tags/">标签页</a> 浏览全部内容。
+        </p>
+      </div>
+    </noscript>
+  </section>
+
+  <script>
+    interface SearchItem {
+      title: string
+      description: string
+      tags: string[]
+      url: string
+    }
+
+    interface PagefindResult {
+      id: string
+      data(): Promise<{
+        url: string
+        excerpt: string
+        meta: Record<string, string>
+      }>
+    }
+
+    interface Pagefind {
+      search(query: string): Promise<{ results: PagefindResult[] }>
+    }
+
+    const root = document.querySelector<HTMLElement>('[data-search-root]')
+    const form = root?.querySelector<HTMLFormElement>('.search-form')
+    const input = root?.querySelector<HTMLInputElement>('input[type="search"]')
+    const status = root?.querySelector<HTMLElement>('.search-status')
+    const results = root?.querySelector<HTMLOListElement>('.search-results')
+    const fallback = JSON.parse(root?.dataset.fallbackIndex ?? '[]') as SearchItem[]
+    let pagefind: Pagefind | undefined
+
+    function appendResult(item: SearchItem, excerpt?: string) {
+      if (!results) return
+      const row = document.createElement('li')
+      const link = document.createElement('a')
+      const title = document.createElement('strong')
+      const description = document.createElement('p')
+      const tags = document.createElement('span')
+
+      link.href = item.url
+      title.textContent = item.title
+      if (excerpt) {
+        const template = document.createElement('template')
+        template.innerHTML = excerpt
+        description.textContent = template.content.textContent
+      } else {
+        description.textContent = item.description
+      }
+      tags.textContent = item.tags.join(' · ')
+      link.append(title, description, tags)
+      row.append(link)
+      results.append(row)
+    }
+
+    async function loadPagefind() {
+      try {
+        const pagefindPath = '/pagefind/pagefind.js'
+        pagefind = (await import(/* @vite-ignore */ pagefindPath)) as Pagefind
+      } catch {
+        pagefind = undefined
+      }
+    }
+
+    async function runSearch(query: string) {
+      if (!results || !status) return
+      results.replaceChildren()
+
+      const normalized = query.trim()
+      if (!normalized) {
+        status.textContent = '输入关键词开始搜索。'
+        return
+      }
+
+      if (pagefind) {
+        const response = await pagefind.search(normalized)
+        const items = await Promise.all(
+          response.results.slice(0, 20).map((result) => result.data()),
+        )
+        for (const item of items) {
+          const fallbackItem = fallback.find((entry) => entry.url === item.url) ?? {
+            title: item.meta.title ?? item.url,
+            description: '',
+            tags: [],
+            url: item.url,
+          }
+          appendResult(fallbackItem, item.excerpt)
+        }
+        status.textContent = `找到 ${response.results.length} 条结果。`
+        return
+      }
+
+      const needle = normalized.toLocaleLowerCase('zh-CN')
+      const matches = fallback.filter((item) =>
+        [item.title, item.description, ...item.tags]
+          .join(' ')
+          .toLocaleLowerCase('zh-CN')
+          .includes(needle),
+      )
+      for (const item of matches) appendResult(item)
+      status.textContent = `找到 ${matches.length} 条标题或标签结果。`
+    }
+
+    await loadPagefind()
+
+    const query = new URLSearchParams(window.location.search).get('q') ?? ''
+    if (input && query) {
+      input.value = query
+      await runSearch(query)
+    }
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault()
+      const value = input?.value ?? ''
+      const url = new URL(window.location.href)
+      value.trim() ? url.searchParams.set('q', value.trim()) : url.searchParams.delete('q')
+      history.replaceState(null, '', url)
+      void runSearch(value)
+    })
+  </script>
+</BaseLayout>
