@@ -20,7 +20,7 @@ function getHeadingText(text: string): string {
 
 {
   headings.length > 0 && (
-    <nav class="toc" aria-label="本文目录">
+    <nav class="toc" data-toc aria-label="本文目录">
       <p class="toc__eyebrow">本文目录</p>
       <ol>
         {headings.map((heading) => (
@@ -32,3 +32,57 @@ function getHeadingText(text: string): string {
     </nav>
   )
 }
+
+<script>
+  interface TocSection {
+    heading: HTMLElement
+    links: HTMLAnchorElement[]
+  }
+
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc] a[href^="#"]')]
+  const sectionMap = new Map<string, TocSection>()
+
+  for (const link of links) {
+    const id = decodeURIComponent(new URL(link.href).hash.slice(1))
+    const heading = document.getElementById(id)
+    if (!heading) continue
+
+    const section = sectionMap.get(id) ?? { heading, links: [] }
+    section.links.push(link)
+    sectionMap.set(id, section)
+  }
+
+  const sections = [...sectionMap.values()]
+  let updateFrame = 0
+
+  function updateCurrentSection() {
+    updateFrame = 0
+    const marker = Math.min(window.innerHeight * 0.35, 320)
+    let current: TocSection | undefined
+
+    for (const section of sections) {
+      if (section.heading.getBoundingClientRect().top > marker) break
+      current = section
+    }
+
+    for (const section of sections) {
+      for (const link of section.links) {
+        if (section === current) {
+          link.setAttribute('aria-current', 'location')
+        } else {
+          link.removeAttribute('aria-current')
+        }
+      }
+    }
+  }
+
+  function scheduleCurrentSectionUpdate() {
+    if (updateFrame) return
+    updateFrame = window.requestAnimationFrame(updateCurrentSection)
+  }
+
+  updateCurrentSection()
+  window.addEventListener('scroll', scheduleCurrentSectionUpdate, { passive: true })
+  window.addEventListener('resize', scheduleCurrentSectionUpdate)
+  window.addEventListener('hashchange', scheduleCurrentSectionUpdate)
+</script>

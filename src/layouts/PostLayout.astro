@@ -27,6 +27,7 @@ const { post, headings, previous, next } = Astro.props
   article
   publishedDate={post.data.publishDate}
   updatedDate={post.data.updatedDate}
+  tags={post.data.tags}
 >
   <article class="article">
     <header class="article-header">
@@ -79,6 +80,10 @@ const { post, headings, previous, next } = Astro.props
     </header>
 
     <div class="article-shell shell">
+      <div class="article-toc-mobile">
+        <TableOfContents headings={headings} />
+      </div>
+
       <div class="article-content">
         <div class="prose" data-pagefind-body>
           <slot />
@@ -129,7 +134,16 @@ const { post, headings, previous, next } = Astro.props
   </article>
 
   <script>
-    import mermaid from 'mermaid'
+    type Mermaid = (typeof import('mermaid'))['default']
+
+    let mermaidPromise: Promise<Mermaid> | undefined
+    let mermaidActivated = false
+    let mermaidRenderQueue = Promise.resolve()
+
+    function loadMermaid(): Promise<Mermaid> {
+      mermaidPromise ??= import('mermaid').then((module) => module.default)
+      return mermaidPromise
+    }
 
     function prepareMermaidBlocks() {
       const blocks = document.querySelectorAll<HTMLElement>('pre > code.language-mermaid')
@@ -140,6 +154,7 @@ const { post, headings, previous, next } = Astro.props
 
         const figure = document.createElement('figure')
         figure.className = 'mermaid-figure'
+        figure.tabIndex = 0
 
         const diagram = document.createElement('div')
         diagram.className = 'mermaid'
@@ -148,7 +163,7 @@ const { post, headings, previous, next } = Astro.props
 
         const caption = document.createElement('figcaption')
         caption.className = 'visually-hidden'
-        caption.textContent = 'Mermaid 图表'
+        caption.textContent = 'Mermaid 图表，可横向滚动'
 
         figure.append(diagram, caption)
         pre.replaceWith(figure)
@@ -159,48 +174,79 @@ const { post, headings, previous, next } = Astro.props
       const diagrams = [...document.querySelectorAll<HTMLElement>('.mermaid[data-source]')]
       if (diagrams.length === 0) return
 
-      const dark = document.documentElement.dataset.theme === 'dark'
-      mermaid.initialize({
-        startOnLoad: false,
-        securityLevel: 'strict',
-        theme: dark ? 'dark' : 'base',
-        fontFamily:
-          'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        themeVariables: dark
-          ? {
-              primaryColor: '#1f6feb',
-              primaryTextColor: '#f0f6fc',
-              primaryBorderColor: '#58a6ff',
-              lineColor: '#9ea7b3',
-              secondaryColor: '#21262d',
-              tertiaryColor: '#161b22',
-            }
-          : {
-              primaryColor: '#dbeafe',
-              primaryTextColor: '#101820',
-              primaryBorderColor: '#005bd8',
-              lineColor: '#4f5b66',
-              secondaryColor: '#f5f7fa',
-              tertiaryColor: '#ffffff',
-            },
-      })
-
-      for (const diagram of diagrams) {
-        const source = diagram.dataset.source
-        if (!source) continue
-        diagram.removeAttribute('data-processed')
-        diagram.textContent = decodeURIComponent(source)
-      }
-
       try {
+        const mermaid = await loadMermaid()
+        const dark = document.documentElement.dataset.theme === 'dark'
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: dark ? 'dark' : 'base',
+          fontFamily:
+            'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          themeVariables: dark
+            ? {
+                primaryColor: '#1f6feb',
+                primaryTextColor: '#f0f6fc',
+                primaryBorderColor: '#58a6ff',
+                lineColor: '#9ea7b3',
+                secondaryColor: '#21262d',
+                tertiaryColor: '#161b22',
+              }
+            : {
+                primaryColor: '#dbeafe',
+                primaryTextColor: '#101820',
+                primaryBorderColor: '#005bd8',
+                lineColor: '#4f5b66',
+                secondaryColor: '#f5f7fa',
+                tertiaryColor: '#ffffff',
+              },
+        })
+
+        for (const diagram of diagrams) {
+          const source = diagram.dataset.source
+          if (!source) continue
+          diagram.removeAttribute('data-processed')
+          diagram.textContent = decodeURIComponent(source)
+        }
+
         await mermaid.run({ nodes: diagrams })
       } catch (error) {
         console.error('Mermaid 图表渲染失败', error)
       }
     }
 
+    function queueMermaidRender() {
+      mermaidRenderQueue = mermaidRenderQueue.then(renderMermaidBlocks)
+      return mermaidRenderQueue
+    }
+
+    function activateMermaidNearViewport() {
+      const figures = [...document.querySelectorAll<HTMLElement>('.mermaid-figure')]
+      if (figures.length === 0) return
+
+      if (!('IntersectionObserver' in window)) {
+        mermaidActivated = true
+        void queueMermaidRender()
+        return
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return
+          observer.disconnect()
+          mermaidActivated = true
+          void queueMermaidRender()
+        },
+        { rootMargin: '600px 0px' },
+      )
+
+      for (const figure of figures) observer.observe(figure)
+    }
+
     prepareMermaidBlocks()
-    void renderMermaidBlocks()
-    window.addEventListener('voile:theme-change', () => void renderMermaidBlocks())
+    activateMermaidNearViewport()
+    window.addEventListener('voile:theme-change', () => {
+      if (mermaidActivated) void queueMermaidRender()
+    })
   </script>
 </BaseLayout>

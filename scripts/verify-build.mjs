@@ -43,6 +43,27 @@ const assertions = [
     executableScripts.every((tag) => tag.includes('data-cfasync="false"')),
     'Cloudflare 不应让 Rocket Loader 改写可执行脚本',
   ],
+  [
+    post.includes('id="copy-status"') && post.includes('aria-live="polite"'),
+    '代码复制结果应通过 live region 提供辅助技术反馈',
+  ],
+  [
+    post.includes('class="article-toc-mobile"') &&
+      post.includes('class="toc" data-toc aria-label="本文目录"'),
+    '长文应提供位于移动端正文之前且可增强当前位置的目录',
+  ],
+  [
+    post.includes('class="table-scroll"') && post.includes('aria-label="可横向滚动的数据表"'),
+    '宽表格应提供有名称的键盘滚动区域',
+  ],
+  [
+    post.includes('property="og:image:type" content="image/png"') &&
+      post.includes('property="og:image:width" content="1200"') &&
+      post.includes('property="og:image:height" content="630"') &&
+      post.includes('property="og:image:alt"'),
+    'Open Graph 图片应声明通用格式、尺寸和替代文本',
+  ],
+  [post.includes('property="article:tag" content="Astro"'), '文章分享元数据应包含内容标签'],
   [rss.includes('<rss'), 'RSS 端点应输出 RSS 文档'],
 ]
 

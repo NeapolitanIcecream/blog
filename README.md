@@ -71,8 +71,12 @@ pnpm test
 | Carbon | [间距令牌](https://carbondesignsystem.com/elements/spacing/overview/)、[编辑性与功能性字体层级](https://carbondesignsystem.com/elements/typography/style-strategies/)、[键盘与认知负担](https://carbondesignsystem.com/guidelines/accessibility/overview/)          |
 | Primer | [清楚的位置与导航语义](https://primer.style/product/ui-patterns/navigation/)、[焦点管理](https://primer.style/accessibility/design-guidance/focus-management/)、[减少动态效果](https://primer.style/accessibility/design-guidance/motion-and-animation/)            |
 
-核心页面在无 JavaScript 时仍提供正文、导航、代码、公式和 Mermaid 源码。JavaScript 只增强主题、
-代码复制、Mermaid SVG 和全文搜索。
+核心页面在无 JavaScript 时仍提供正文、导航、代码、公式和 Mermaid 源码。JavaScript 增强主题、
+目录当前位置、复制反馈、Mermaid SVG 和全文搜索。Mermaid 接近视口时才加载；宽表格与图表提供
+有名称的键盘滚动区域；站内页面只在用户悬停链接时预取。
+
+默认 Open Graph 图片为 `public/social-card.png`，SVG 文件保留为可编辑源稿。元数据同时声明图片
+类型、尺寸、替代文本和文章标签。
 
 ## Cloudflare Pages
 

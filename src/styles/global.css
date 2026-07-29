@@ -72,7 +72,6 @@ html[data-theme='dark'] {
 
 html {
   min-width: 20rem;
-  scroll-behavior: smooth;
   scroll-padding-top: 6.5rem;
   text-size-adjust: 100%;
 }
@@ -1461,6 +1460,10 @@ html[data-theme='dark'] .theme-toggle__moon {
   grid-column: 2 / span 8;
 }
 
+.article-toc-mobile {
+  display: none;
+}
+
 .article-sidebar {
   min-width: 0;
   grid-column: 11 / -1;
@@ -1497,6 +1500,13 @@ html[data-theme='dark'] .theme-toggle__moon {
 .toc a:hover {
   color: var(--brand);
   text-decoration: underline;
+}
+
+.toc a[aria-current='location'] {
+  padding-left: var(--space-3);
+  color: var(--text);
+  box-shadow: inset 3px 0 var(--brand);
+  font-weight: 750;
 }
 
 .toc__subitem {
@@ -1680,12 +1690,18 @@ html[data-theme='dark'] .astro-code span {
   text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
-.prose table {
-  display: block;
-  width: max-content;
+.table-scroll {
+  width: 100%;
   max-width: 100%;
   margin: var(--space-7) 0;
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.prose .table-scroll table {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
   border-collapse: collapse;
   font-size: 0.92rem;
 }
@@ -1748,6 +1764,13 @@ html[data-theme='dark'] .astro-code span {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface);
+}
+
+.table-scroll:focus-visible,
+.mermaid-figure:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px #101820;
 }
 
 .mermaid {
@@ -1829,6 +1852,10 @@ html[data-theme='dark'] .astro-code span {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
   a,
   button,
   summary,
@@ -2068,13 +2095,18 @@ html[data-theme='dark'] .astro-code span {
     min-width: 0;
   }
 
-  .article-sidebar {
-    padding-top: var(--space-7);
-    border-top: 1px solid var(--border);
+  .article-toc-mobile {
+    display: block;
+    padding-bottom: var(--space-7);
+    border-bottom: 1px solid var(--border);
   }
 
-  .toc {
+  .article-toc-mobile .toc {
     position: static;
+  }
+
+  .article-sidebar {
+    display: none;
   }
 
   .toc ol {

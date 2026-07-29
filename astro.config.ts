@@ -9,6 +9,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { SITE } from './src/config'
 import { rehypeAccessibleTaskLists } from './src/plugins/rehype-accessible-task-lists'
+import { rehypeScrollableTables } from './src/plugins/rehype-scrollable-tables'
 
 export default defineConfig({
   site: SITE.url,
@@ -16,7 +17,7 @@ export default defineConfig({
   trailingSlash: 'always',
   prefetch: {
     prefetchAll: true,
-    defaultStrategy: 'viewport',
+    defaultStrategy: 'hover',
   },
   integrations: [mdx(), sitemap()],
   markdown: {
@@ -24,6 +25,7 @@ export default defineConfig({
       remarkPlugins: [remarkGfm, remarkMath],
       rehypePlugins: [
         rehypeAccessibleTaskLists,
+        rehypeScrollableTables,
         rehypeKatex,
         rehypeSlug,
         [
