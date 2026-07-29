@@ -6,20 +6,18 @@ import { getPublishedPosts } from '../../utils/posts'
 const posts = await getPublishedPosts()
 ---
 
-<BaseLayout title="全部文章" description="Voile 技术博客的全部公开文章。">
+<BaseLayout title="文章" description="Voile 的全部文章。">
   <header class="page-header">
     <div class="page-header__grid shell">
       <div>
-        <p class="eyebrow">文章归档</p>
-        <h1>全部文章</h1>
+        <h1>文章</h1>
       </div>
-      <p>按发布时间排列的工程实践、系统设计与问题求解记录。</p>
     </div>
   </header>
 
   <section class="archive shell" aria-label="文章列表">
     <div class="archive__summary">
-      <p><strong>{posts.length}</strong> 篇公开文章</p>
+      <p><strong>{posts.length}</strong> 篇文章</p>
       <a class="text-link" href="/search/">搜索全文</a>
     </div>
 
@@ -32,9 +30,7 @@ const posts = await getPublishedPosts()
         </div>
       ) : (
         <div class="empty-state">
-          <p class="eyebrow">暂无内容</p>
-          <h2>第一篇文章还在路上。</h2>
-          <p>在 `src/content/posts/` 新建 Markdown 文件后，它会出现在这里。</p>
+          <h2>还没有文章。</h2>
         </div>
       )
     }

@@ -22,9 +22,19 @@ for (const file of requiredFiles) {
 
 const post = await readFile(resolve(root, 'dist/posts/writing-system/index.html'), 'utf8')
 const home = await readFile(resolve(root, 'dist/index.html'), 'utf8')
+const postsPage = await readFile(resolve(root, 'dist/posts/index.html'), 'utf8')
+const tagsPage = await readFile(resolve(root, 'dist/tags/index.html'), 'utf8')
+const aboutPage = await readFile(resolve(root, 'dist/about/index.html'), 'utf8')
+const searchPage = await readFile(resolve(root, 'dist/search/index.html'), 'utf8')
+const styles = await readFile(resolve(root, 'src/styles/global.css'), 'utf8')
 const rss = await readFile(resolve(root, 'dist/rss.xml'), 'utf8')
 const executableScripts = (post.match(/<script\b[^>]*>/g) ?? []).filter(
   (tag) => !tag.includes('application/ld+json'),
+)
+const siteHeaderRule = styles.match(/\.site-header\s*\{[^}]*\}/)?.[0] ?? ''
+const pageHeaderRule = styles.match(/\.page-header\s*\{[^}]*\}/)?.[0] ?? ''
+const pageHeaders = [postsPage, tagsPage, aboutPage, searchPage].map(
+  (page) => page.match(/<header class="page-header">[\s\S]*?<\/header>/)?.[0] ?? '',
 )
 
 const assertions = [
@@ -42,6 +52,24 @@ const assertions = [
   [
     executableScripts.every((tag) => tag.includes('data-cfasync="false"')),
     'Cloudflare 不应让 Rocket Loader 改写可执行脚本',
+  ],
+  [
+    home.includes('<link rel="icon" href="/favicon.svg"') &&
+      home.includes('<img class="brand__mark" src="/favicon.svg"'),
+    '页头标志与浏览器 favicon 应使用同一资源',
+  ],
+  [!siteHeaderRule.includes('border-top'), '页头顶部不应出现装饰横条'],
+  [
+    !pageHeaderRule.includes('linear-gradient') &&
+      pageHeaders.every((header) => !/<p(?:\s|>)/.test(header)),
+    '栏目页标题区域不应包含装饰竖线或右侧说明',
+  ],
+  [!styles.includes('.post-card::before'), '文章卡片不应使用与圆角脱节的顶部横条'],
+  [
+    !['system-card', 'signal-strip', 'principles', 'newsletter-cta'].some((name) =>
+      home.includes(name),
+    ) && !['站点原则', '设计指南', '技术栈'].some((text) => aboutPage.includes(text)),
+    '公开页面不应展示站点实现说明或产品化宣传文案',
   ],
   [
     post.includes('id="copy-status"') && post.includes('aria-live="polite"'),

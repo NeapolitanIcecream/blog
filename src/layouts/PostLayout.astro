@@ -42,7 +42,6 @@ const { post, headings, previous, next } = Astro.props
 
         <div class="article-header__grid">
           <div class="article-header__main">
-            <p class="eyebrow">技术文章</p>
             <h1 data-pagefind-meta="title">{post.data.title}</h1>
             <p class="article-header__description" data-pagefind-meta="description">
               {post.data.description}
@@ -91,7 +90,7 @@ const { post, headings, previous, next } = Astro.props
 
         <footer class="article-footer">
           <div>
-            <p class="article-footer__label">归档标签</p>
+            <p class="article-footer__label">标签</p>
             <ul class="tag-list tag-list--large">
               {
                 post.data.tags.map((tag) => (

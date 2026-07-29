@@ -3,59 +3,27 @@ import { SITE } from '../config'
 import BaseLayout from '../layouts/BaseLayout.astro'
 ---
 
-<BaseLayout title="关于" description="关于 Voile 技术博客的内容、设计与技术实现。">
-  <header class="page-header page-header--about">
+<BaseLayout title="关于" description="关于 Voile。">
+  <header class="page-header">
     <div class="page-header__grid shell">
       <div>
-        <p class="eyebrow">关于本站</p>
-        <h1>写作是工程工作的一部分。</h1>
+        <h1>关于</h1>
       </div>
-      <p>
-        {SITE.title} 用于记录可复核的技术判断。文章尽量给出上下文、约束、过程和证据，而不是只留下结论。
-      </p>
     </div>
   </header>
 
-  <div class="about-grid shell">
-    <aside class="about-grid__aside">
-      <p class="eyebrow">站点原则</p>
-      <ol>
-        <li>内容先于装饰</li>
-        <li>证据先于结论</li>
-        <li>静态先于运行时</li>
-        <li>语义先于脚本</li>
-      </ol>
-    </aside>
-
-    <div class="prose about-grid__content">
-      <h2>写什么</h2>
+  <div class="about-page shell">
+    <div class="prose about-page__content">
+      <p class="about-page__intro">你好，我是 Voile。这里是我的个人博客。</p>
       <p>
-        主题包括软件工程、系统设计、开发工具与问题求解。技术文章可以混合中文正文、代码、表格、
-        Mermaid 图表和 LaTeX 公式。
+        我主要记录软件开发、工具和日常遇到的问题。文章以中文为主，需要时会使用代码、图表和公式。
       </p>
 
-      <h2>如何设计</h2>
-      <p>
-        本站把 GOV.UK、Carbon 和 Primer 当作设计指南使用。GOV.UK 提供渐进增强、清晰内容与
-        可访问焦点的基线；Carbon 提供网格、间距和类型令牌；Primer 提供导航语义、键盘路径和主题角色。
-      </p>
-      <p>
-        这些规则落在 HTML 结构和 CSS 令牌中。正文无须 JavaScript；主题、图表、复制按钮和全文搜索
-        是独立增强层。
-      </p>
-
-      <h2>技术栈</h2>
+      <h2>链接</h2>
       <ul>
-        <li>Astro 内容集合负责 Markdown/MDX、类型校验和静态路由。</li>
-        <li>Shiki、KaTeX 与 Mermaid 分别处理代码、公式和图表。</li>
-        <li>Pagefind 在构建后生成中文全文索引。</li>
-        <li>Cloudflare Pages 提供静态托管和自定义域名。</li>
+        <li><a href="/rss.xml">RSS 订阅</a></li>
+        <li><a href={SITE.repository}>GitHub</a></li>
       </ul>
-
-      <h2>获取更新</h2>
-      <p>
-        <a href="/rss.xml">订阅 RSS</a>，或在 <a href={SITE.repository}>GitHub</a> 查看站点源码。
-      </p>
     </div>
   </div>
 </BaseLayout>

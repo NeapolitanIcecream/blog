@@ -6,14 +6,12 @@ const posts = await getPublishedPosts()
 const tags = getTagSummary(posts)
 ---
 
-<BaseLayout title="标签" description="按主题浏览 Voile 技术博客的文章。">
+<BaseLayout title="标签" description="按标签浏览 Voile 的文章。">
   <header class="page-header">
     <div class="page-header__grid shell">
       <div>
-        <p class="eyebrow">主题索引</p>
         <h1>标签</h1>
       </div>
-      <p>标签描述文章讨论的问题域。一个文章可以同时属于多个主题。</p>
     </div>
   </header>
 
@@ -37,7 +35,6 @@ const tags = getTagSummary(posts)
       ) : (
         <div class="empty-state">
           <h2>还没有标签。</h2>
-          <p>发布带有 `tags` 字段的文章后，这里会自动生成索引。</p>
         </div>
       )
     }

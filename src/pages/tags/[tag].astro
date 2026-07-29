@@ -35,14 +35,15 @@ const { tag, posts } = Astro.props
             <li aria-current="page">{tag}</li>
           </ol>
         </nav>
-        <p class="eyebrow">标签归档</p>
         <h1>{tag}</h1>
       </div>
-      <p>共 {posts.length} 篇文章，按发布时间从新到旧排列。</p>
     </div>
   </header>
 
   <section class="archive shell" aria-label={`${tag} 标签文章`}>
+    <div class="archive__summary">
+      <p><strong>{posts.length}</strong> 篇文章</p>
+    </div>
     <div class="archive__list">
       {posts.map((post) => <PostCard post={post} headingLevel={2} />)}
     </div>

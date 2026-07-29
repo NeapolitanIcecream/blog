@@ -14,7 +14,6 @@ const posts = defineCollection({
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string().min(1)).default([]),
     draft: z.boolean().default(false),
-    featured: z.boolean().default(false),
     lang: z.enum(['zh-CN', 'en']).default('zh-CN'),
   }),
 })

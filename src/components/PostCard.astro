@@ -4,31 +4,30 @@ import { formatDate, formatDateISO, getPostUrl, getReadingMinutes, getTagUrl } f
 
 interface Props {
   post: Post
-  featured?: boolean
   headingLevel?: 2 | 3
 }
 
-const { post, featured = false, headingLevel = 2 } = Astro.props
+const { post, headingLevel = 2 } = Astro.props
 const Heading = `h${headingLevel}` as 'h2' | 'h3'
 ---
 
-<article class:list={['post-card', { 'post-card--featured': featured }]} data-pagefind-ignore>
-  <div class="post-card__topline">
-    <span>{featured ? '重点文章' : '文章'}</span>
-    <span>{getReadingMinutes(post)} 分钟阅读</span>
-  </div>
-
+<article class="post-card" data-pagefind-ignore>
   <div class="post-card__body">
+    <div class="post-card__meta">
+      <time datetime={formatDateISO(post.data.publishDate)}
+        >{formatDate(post.data.publishDate)}</time
+      >
+      <span>{getReadingMinutes(post)} 分钟</span>
+    </div>
     <Heading class="post-card__title">
       <a href={getPostUrl(post)}>{post.data.title}</a>
     </Heading>
     <p>{post.data.description}</p>
   </div>
 
-  <div class="post-card__footer">
-    <time datetime={formatDateISO(post.data.publishDate)}>{formatDate(post.data.publishDate)}</time>
-    {
-      post.data.tags.length > 0 && (
+  {
+    post.data.tags.length > 0 && (
+      <div class="post-card__footer">
         <ul class="tag-list" aria-label="文章标签">
           {post.data.tags.slice(0, 3).map((tag) => (
             <li>
@@ -36,7 +35,7 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3'
             </li>
           ))}
         </ul>
-      )
-    }
-  </div>
+      </div>
+    )
+  }
 </article>

@@ -25,17 +25,16 @@ const year = new Date().getUTCFullYear()
       </ul>
     </nav>
 
-    <nav aria-label="订阅与源代码">
-      <h2>连接</h2>
+    <nav aria-label="其他链接">
+      <h2>其他</h2>
       <ul>
         <li><a href="/rss.xml">RSS 订阅</a></li>
-        <li><a href={SITE.repository} rel="external">GitHub 源码</a></li>
+        <li><a href={SITE.repository} rel="external">GitHub</a></li>
       </ul>
     </nav>
   </div>
 
   <div class="site-footer__meta shell">
-    <p>© {year} {SITE.author}。内容版权归作者所有。</p>
-    <p>Astro 构建 · Cloudflare Pages 托管</p>
+    <p>© {year} {SITE.author}</p>
   </div>
 </footer>

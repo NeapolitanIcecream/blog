@@ -1,19 +1,18 @@
 ---
-title: 一篇文章，验证整个写作系统
-description: 用同一篇 Markdown 检查中文排版、代码、Mermaid、LaTeX、表格和渐进增强。
+title: 这个博客如何处理 Markdown、图表与公式
+description: 记录这个 Astro 博客的内容结构，以及代码、Mermaid 和 LaTeX 的处理方式。
 publishDate: 2026-07-29
 updatedDate: 2026-07-29
 tags:
   - Astro
   - Markdown
-  - 写作系统
-featured: true
+  - 博客搭建
 draft: false
 lang: zh-CN
 ---
 
-技术博客的难点不是把文本放到网页上，而是让论证结构、代码、图表和公式在不同设备上保持可读，
-同时让源文件继续适合版本控制。这篇文章既是写作示例，也是站点的构建验收样本。
+这个博客使用 Astro 生成静态页面，文章保存在 Markdown 文件中。代码、图表和公式需要在不同设备上
+保持可读，源文件也要适合版本控制。
 
 > **渐进增强约束：** 即使 JavaScript 没有执行，正文、代码、公式和 Mermaid 源码仍然可见。
 > JavaScript 只把图表源码变成 SVG，并增加主题切换、复制按钮和全文搜索。
@@ -24,7 +23,7 @@ lang: zh-CN
 
 ```yaml
 ---
-title: 一篇文章，验证整个写作系统
+title: 我的第一篇文章
 description: 一句话摘要
 publishDate: 2026-07-29
 tags:

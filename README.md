@@ -1,6 +1,6 @@
-# Voile 技术博客
+# Voile
 
-基于 Astro 7 的中文技术博客，静态部署到 Cloudflare Pages，正式域名为
+基于 Astro 7 的个人博客，静态部署到 Cloudflare Pages，正式域名为
 [`voile.tech`](https://voile.tech)。
 
 ## 写作
@@ -22,7 +22,6 @@ tags:
 
 - `updatedDate`：更新时间。
 - `draft`：设为 `true` 后不参与列表、标签、RSS 和静态路由。
-- `featured`：设为 `true` 后优先显示在首页。
 - `lang`：默认 `zh-CN`，也可设为 `en`。
 
 Mermaid 使用代码围栏：
