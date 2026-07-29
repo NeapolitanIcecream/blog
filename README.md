@@ -91,5 +91,6 @@ Pages 构建设置：
 pnpm deploy
 ```
 
-`wrangler.jsonc` 固定了输出目录和兼容日期。首次创建项目或本机登录失效时，先运行
-`pnpm wrangler login`，再部署并在 Cloudflare Pages 项目中把 `voile.tech` 设为自定义域名。
+部署命令固定使用现有的 `blog` Pages 项目；该项目已绑定 `voile.tech`。构建过程会给可执行
+脚本添加 `data-cfasync="false"`，避免 Rocket Loader 改写 Astro 模块和 Mermaid 动态分包。
+本机登录失效时，先运行 `pnpm exec wrangler login`。

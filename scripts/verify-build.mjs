@@ -23,6 +23,9 @@ for (const file of requiredFiles) {
 const post = await readFile(resolve(root, 'dist/posts/writing-system/index.html'), 'utf8')
 const home = await readFile(resolve(root, 'dist/index.html'), 'utf8')
 const rss = await readFile(resolve(root, 'dist/rss.xml'), 'utf8')
+const executableScripts = (post.match(/<script\b[^>]*>/g) ?? []).filter(
+  (tag) => !tag.includes('application/ld+json'),
+)
 
 const assertions = [
   [post.includes('class="katex"'), '文章应包含构建后的 KaTeX 标记'],
@@ -36,6 +39,10 @@ const assertions = [
   ],
   [home.includes('lang="zh-CN"'), '首页应声明中文语言'],
   [home.includes('href="#main-content"'), '首页应提供跳过重复导航的链接'],
+  [
+    executableScripts.every((tag) => tag.includes('data-cfasync="false"')),
+    'Cloudflare 不应让 Rocket Loader 改写可执行脚本',
+  ],
   [rss.includes('<rss'), 'RSS 端点应输出 RSS 文档'],
 ]
 

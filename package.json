@@ -11,12 +11,12 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && node scripts/prepare-cloudflare-output.mjs && pagefind --site dist",
     "preview": "astro preview",
     "test": "pnpm check && pnpm build && node scripts/verify-build.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "deploy": "pnpm build && wrangler pages deploy dist --project-name=voile-tech"
+    "deploy": "pnpm build && wrangler pages deploy dist --project-name=blog"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "7.2.2",
