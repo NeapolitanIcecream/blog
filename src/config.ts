@@ -1,7 +1,7 @@
 export const SITE = {
   name: 'Voile',
   title: 'Voile',
-  description: '记录软件开发、工具和一些想法。',
+  description: 'Voile 的个人博客。',
   url: 'https://voile.tech',
   language: 'zh-CN',
   author: 'Voile',

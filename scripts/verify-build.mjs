@@ -72,6 +72,17 @@ const assertions = [
     '公开页面不应展示站点实现说明或产品化宣传文案',
   ],
   [
+    (home.match(/你好，我是 Voile。/g) ?? []).length === 1 &&
+      !['记录软件开发', '主要记录软件开发', 'home-hero__lead'].some(
+        (text) => home.includes(text) || aboutPage.includes(text),
+      ),
+    '首页应只保留一句个人招呼，不应重复解释博客内容',
+  ],
+  [
+    !home.includes('site-footer__intro') && !home.includes('<small>个人博客</small>'),
+    '页头和页脚不应重复站点定位文案',
+  ],
+  [
     post.includes('id="copy-status"') && post.includes('aria-live="polite"'),
     '代码复制结果应通过 live region 提供辅助技术反馈',
   ],
