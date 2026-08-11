@@ -627,7 +627,7 @@ html[data-theme='dark'] .theme-toggle__moon {
   gap: var(--space-2);
 }
 
-.tag-list a {
+.tag-list :is(a, span) {
   display: inline-flex;
   padding: 0.18rem 0.48rem;
   border: 1px solid var(--border);
@@ -1406,7 +1406,7 @@ html[data-theme='dark'] .astro-code span {
   justify-content: flex-start;
 }
 
-.tag-list--large a {
+.tag-list--large :is(a, span) {
   padding: 0.35rem 0.65rem;
   font-size: 0.78rem;
 }

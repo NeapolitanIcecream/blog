@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { getPublishedPosts, getPostUrl } from '../utils/posts'
+import { getListedPosts, getPostUrl } from '../utils/posts'
 
-const posts = await getPublishedPosts()
+const posts = await getListedPosts()
 const fallbackIndex = posts.map((post) => ({
   title: post.data.title,
   description: post.data.description,

@@ -1,19 +1,24 @@
 ---
 import { render } from 'astro:content'
 import PostLayout from '../../layouts/PostLayout.astro'
-import { getPublishedPosts, type Post } from '../../utils/posts'
+import { getPublishedPosts, isListedPost, type Post } from '../../utils/posts'
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts()
+  const listedPosts = posts.filter(isListedPost)
 
-  return posts.map((post, index) => ({
-    params: { id: post.id },
-    props: {
-      post,
-      previous: posts[index + 1],
-      next: posts[index - 1],
-    },
-  }))
+  return posts.map((post) => {
+    const listedIndex = listedPosts.findIndex((listedPost) => listedPost.id === post.id)
+
+    return {
+      params: { id: post.id },
+      props: {
+        post,
+        previous: listedIndex >= 0 ? listedPosts[listedIndex + 1] : undefined,
+        next: listedIndex >= 0 ? listedPosts[listedIndex - 1] : undefined,
+      },
+    }
+  })
 }
 
 interface Props {

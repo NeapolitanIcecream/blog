@@ -13,6 +13,8 @@ const requiredFiles = [
   'dist/404.html',
   'dist/rss.xml',
   'dist/robots.txt',
+  'dist/sitemap-index.xml',
+  'dist/sitemap-0.xml',
   'dist/pagefind/pagefind.js',
 ]
 
@@ -28,6 +30,8 @@ const aboutPage = await readFile(resolve(root, 'dist/about/index.html'), 'utf8')
 const searchPage = await readFile(resolve(root, 'dist/search/index.html'), 'utf8')
 const styles = await readFile(resolve(root, 'src/styles/global.css'), 'utf8')
 const rss = await readFile(resolve(root, 'dist/rss.xml'), 'utf8')
+const sitemap = await readFile(resolve(root, 'dist/sitemap-0.xml'), 'utf8')
+const unlistedTitle = '这个博客如何处理 Markdown、图表与公式'
 const executableScripts = (post.match(/<script\b[^>]*>/g) ?? []).filter(
   (tag) => !tag.includes('application/ld+json'),
 )
@@ -40,7 +44,20 @@ const pageHeaders = [postsPage, tagsPage, aboutPage, searchPage].map(
 const assertions = [
   [post.includes('class="katex"'), '文章应包含构建后的 KaTeX 标记'],
   [post.includes('language-mermaid'), '文章应保留 Mermaid 渐进增强源码'],
-  [post.includes('data-pagefind-body'), '文章正文应进入全文索引'],
+  [!post.includes('data-pagefind-body'), '目录外文章不应进入全文索引'],
+  [post.includes('<meta name="robots" content="noindex"'), '目录外文章应阻止搜索引擎收录'],
+  [
+    [home, postsPage, tagsPage, searchPage].every((page) => !page.includes(unlistedTitle)),
+    '目录外文章不应出现在公开目录或搜索回退索引中',
+  ],
+  [
+    !rss.includes(unlistedTitle) && !sitemap.includes('/posts/writing-system/'),
+    '目录外文章不应进入 RSS 或站点地图',
+  ],
+  [
+    !post.includes('href="/tags/Astro/"') && !post.includes('aria-label="相邻文章"'),
+    '目录外文章不应向隐藏标签页或相邻文章泄露入口',
+  ],
   [post.includes('id="main-content"'), '页面应提供跳转目标'],
   [post.includes('aria-label="本文目录"'), '文章应包含有名称的目录导航'],
   [

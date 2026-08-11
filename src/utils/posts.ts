@@ -11,6 +11,14 @@ export async function getPublishedPosts(): Promise<Post[]> {
   )
 }
 
+export function isListedPost(post: Post): boolean {
+  return !post.data.unlisted
+}
+
+export async function getListedPosts(): Promise<Post[]> {
+  return (await getPublishedPosts()).filter(isListedPost)
+}
+
 export function getPostUrl(post: Post): string {
   return `/posts/${post.id}/`
 }

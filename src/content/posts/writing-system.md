@@ -8,6 +8,7 @@ tags:
   - Markdown
   - 博客搭建
 draft: false
+unlisted: true
 lang: zh-CN
 ---
 
@@ -32,8 +33,8 @@ tags:
 ---
 ```
 
-构建时会检查字段类型。公开文章自动进入首页、归档、标签页、RSS 和站点地图；`draft: true`
-的文章不会生成公开路由。
+构建时会检查字段类型。普通文章自动进入首页、归档、标签页、搜索、RSS 和站点地图；
+`unlisted: true` 的文章只通过固定链接访问，`draft: true` 的文章则不生成路由。
 
 ### GFM 与结构化内容
 

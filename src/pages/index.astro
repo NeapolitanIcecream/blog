@@ -1,9 +1,9 @@
 ---
 import PostCard from '../components/PostCard.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
-import { getPublishedPosts } from '../utils/posts'
+import { getListedPosts } from '../utils/posts'
 
-const posts = await getPublishedPosts()
+const posts = await getListedPosts()
 const latestPosts = posts.slice(0, 6)
 ---
 
